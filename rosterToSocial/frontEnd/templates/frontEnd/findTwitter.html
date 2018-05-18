@@ -1,0 +1,153 @@
+{% extends 'frontEnd/base.html' %}
+
+{% block content %}
+<div class="container">
+    <br>
+    <div class="card">
+        <div class="card-body">
+            <center>
+                <h3>{{ player }}</h3>
+                <a class="btn btn-danger" href="{% url 'no_twitter' pk=player.pk %}" role="button">No Twitter</a>
+                <br><br>
+            </center>
+        </div>
+    </div>
+    <br>
+    <form method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+      {{ form.as_p }}
+      <button type="submit" class="btn btn-primary">Search</button>
+    </form>
+    <hr>
+        {% for result in player.twitterresult_set.all %}
+            <br>
+            {% if result.friend %}
+                <div class="twPc-div" style="border: 10px solid #428bca">
+            {% else %}
+                <div class="twPc-div">
+            {% endif %}
+                <a class="twPc-bg twPc-block" style="background-image:url({{ result.profile_banner_url }});"></a>
+                <div>
+                    <a title="{{ result.screen_name }}" href="https://twitter.com/{{ result.screen_name }}" class="twPc-avatarLink">
+                        <img alt="{{ result.screen_name }}" src="{{ result.profile_image_url }}" class="twPc-avatarImg">
+                    </a>
+
+                    <div class="twPc-divUser">
+                        <div class="twPc-divName">
+                            <a href="https://twitter.com/{{ result.screen_name }}" target="_blank">{{ result.name }}</a>
+                        </div>
+                        <span>
+                            <a href="https://twitter.com/{{ result.screen_name }}" target="_blank">@<span>{{ result.screen_name }}</span></a>
+                        </span>
+                    </div>
+
+                    <div class="twPc-divStats">
+                        <p>{{ result.description }}</p>
+                    </div>
+                </div>
+            </div>
+            {% if result.friend %}
+                <br>
+                <h6>{{ result.name }} is followed by a player on the roster.</h6>
+            {% endif %}
+            <br>
+            <a href="{% url 'select_twitter_result' pk=result.pk %}" class="btn btn-primary btn-lg" style="max-width:600; width:100%;">Select</a>
+            <br>
+            <hr>
+        {% endfor %}
+    <a class="btn btn-danger" href="{% url 'no_twitter' pk=player.pk %}" role="button">No Twitter</a>
+    <br><br>
+</div>
+
+<style>
+@import url(https://fonts.googleapis.com/css?family=Lato:400,300,900);
+.twPc-div {
+    background: #fff none repeat scroll 0 0;
+    border: 1px solid #e1e8ed;
+    border-radius: 13px;
+    height: 400px;
+    max-width: 600px; // orginal twitter width: 290px;
+
+}
+.twPc-bg {
+    background: #00aced;
+    background-position: 0 50%;
+    background-size: 100% auto;
+    border-bottom: 1px solid #e1e8ed;
+    border-radius: 4px 4px 0 0;
+    height: 200px;
+    width: 100%;
+}
+.twPc-block {
+    display: block !important;
+}
+.twPc-avatarLink {
+    background-color: #fff;
+    border-radius: 6px;
+    display: inline-block !important;
+    float: left;
+    margin: -30px 5px 0 8px;
+    max-width: 100%;
+    padding: 1px;
+    vertical-align: bottom;
+}
+.twPc-avatarImg {
+    border: 2px solid #fff;
+    border-radius: 7px;
+    box-sizing: border-box;
+    color: #fff;
+    height: 200px;
+    width: 200px;
+}
+.twPc-divUser {
+    margin: 5px 0 0;
+}
+.twPc-divName {
+    font-size: 18px;
+    font-weight: 700;
+    line-height: 21px;
+}
+.twPc-divName a {
+    color: inherit !important;
+}
+.twPc-divStats {
+    margin-left: 11px;
+    padding: 10px 0;
+}
+.twPc-Arrange {
+    box-sizing: border-box;
+    display: table;
+    margin: 0;
+    min-width: 100%;
+    padding: 0;
+    table-layout: auto;
+}
+ul.twPc-Arrange {
+    list-style: outside none none;
+    margin: 0;
+    padding: 0;
+}
+.twPc-ArrangeSizeFit {
+    display: table-cell;
+    padding: 0;
+    vertical-align: top;
+}
+.twPc-ArrangeSizeFit a:hover {
+    text-decoration: none;
+}
+.twPc-StatValue {
+    display: block;
+    font-size: 18px;
+    font-weight: 500;
+    transition: color 0.15s ease-in-out 0s;
+}
+.twPc-StatLabel {
+    color: #8899a6;
+    font-size: 10px;
+    letter-spacing: 0.02em;
+    overflow: hidden;
+    text-transform: uppercase;
+    transition: color 0.15s ease-in-out 0s;
+}
+</style>
+{% endblock %}

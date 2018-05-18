@@ -1,0 +1,82 @@
+{% extends 'frontEnd/base.html' %}
+
+{% block content %}
+<div class="container">
+    <center>
+        {% if is_editing_name == "True" %}
+        <div class="form-div">
+            <form method="POST">
+                {% csrf_token %}
+                {{ name_form.as_p }}
+                <button type="submit" class="save btn btn-main">Save</button>
+            </form>
+        </div>
+        {% elif roster.name == None or roster.name == "" %}
+            <h1>Roster</h1>
+            <a class="btn btn-secondary btn-sm" href="{% url 'roster' pk=roster.pk %}?is_editing_name=True">Rename</a>
+            <br><br>
+        {% else %}
+            <h1> {{ roster.name }} </h1>
+            <a class="btn btn-secondary btn-sm" href="{% url 'roster' pk=roster.pk %}?is_editing_name=True">Rename</a>
+            <br><br>
+        {% endif %}
+    </center>
+    {% if is_editing_min == "True" %}
+        <form method="POST">
+            {% csrf_token %}
+            {{ min_form.as_p }}
+            <button type="submit" class="save btn btn-main">Save</button>
+        </form>
+    {% else %}
+        <h4>Minimum followers: {{ roster.min_followers }}
+            <a class="btn btn-secondary btn-sm" href="{% url 'roster' pk=roster.pk %}?is_editing_min=True">
+                Edit
+            </a>
+        </h4>
+        <p>This is the minimum number of followers a needs to show up in results. 100 works well for D1 teams
+            but for high school possibly go lower.</p>
+    {% endif %}
+    <table class="table table-striped table-bordered table-hover">
+        <caption>
+            <a class="btn btn-primary" href="{% url 'download_roster' pk=roster.pk %}" role="button">Download</a>
+        </caption>
+        <thead class="thead-light">
+            <tr>
+                <th scope="col">Name</th>
+                <th scope="col"><center>Twitter</center></th>
+                <th scope="col"><center>Search</center></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for player in players %}
+                <tr>
+                    <th scope="row" class="align-middle">{{ player.name }}</th>
+                    <td class="align-middle">
+                        <div id="social">
+                            <center>
+                                {% if player.twitter == "" %}
+
+                                {% elif player.twitter == "NONE" %}
+                                    None
+                                    <a class="btn btn-danger btn-sm" href="{% url 'remove_twitter' pk=player.pk %}">
+                                        <span class="glyphicon glyphicon-trash"></span>
+                                    </a>
+                                {% else %}
+                                    <a href="https://twitter.com/{{ player.twitter }}" target="_blank">@{{ player.twitter }}</a>
+                                    <a class="btn btn-danger btn-sm" href="{% url 'remove_twitter' pk=player.pk %}">
+                                        <span class="glyphicon glyphicon-trash"></span>
+                                    </a>
+                                {% endif %}
+                            </center>
+                        </div>
+                    </td>
+                    <td class="align-middle"><center><a class="btn btn-primary" href="{% url 'find_twitter' pk=player.pk %}" role="button">
+                         <span class="glyphicon glyphicon-search"></span>
+                    </a></center></td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <br><br><br><br>
+</div>
+{% endblock %}
